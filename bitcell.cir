@@ -1,0 +1,55 @@
+[aimspice]
+[description]
+1488
+BitCell
+.include gpdk90nm_sf.cir
+.include and.cir
+.include and_inv_a.cir
+.include or.cir
+.include nor.cir
+
+.PARAM supVol = 1v
+V_VDD  VDD    0  supVol    ! Supply voltage
+V_VSS  0      0            ! Ground
+
+! Inputs   net               voltage1  voltage2  delay  rise  fall  width  period   (set period to bigass number for one pulse)
+V_RW       RW       0 PULSE  0         supVol    5n     1n    1n    15n    60n      ! 0 = read,   1 = write
+V_WORDLINE WORDLINE 0 PULSE  0         supVol    5n     1n    1n    15n    30n    
+V_I        I        0 PULSE  0         supVol    50n    1n    1n    50n    300000n      ! input bit
+V_BITCARRY BITCARRY 0 DC     0                                                      ! Keep bitcarry at 0 for the simulation
+
+
+! instance  inputA  inputB    output  VDD  VSS  type
+X1          RW      WORDLINE  T1      VDD  0    AND_GATE        ! wordline + rw gates
+X2          RW      WORDLINE  T4      VDD  0    AND_GATE_INV_A 
+
+X3          I       T1        T2      VDD  0    AND_GATE        ! input bit ands
+X4          I       T1        T3      VDD  0    AND_GATE_INV_A
+
+X5          T2      Qinv      Q       VDD  0    NOR_GATE        ! flip flop
+X6          T3      Q         Qinv    VDD  0    NOR_GATE 
+
+X7          Qinv    T4        T5      VDD  0    AND_GATE        ! bitLine logic
+X8          T5      BITCARRY  BITOUT  VDD  0    OR_GATE 
+
+
+.plot v(rw) v(WORDLINE) v(I) v(qinv) v(q) I(R1)
+*option ymin=-0.2 ymax=1.1
+
+
+
+[dc]
+1
+VDD
+0
+1
+0.001
+[tran]
+0.1n
+120n
+X
+X
+0
+[ana]
+4 0
+[end]

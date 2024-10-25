@@ -20,12 +20,10 @@ endmodule
 module d_flip_flop (
     input wire D,
     input wire clk,
-    input wire rstn,
     output wire Q,
     output wire Qn
 );
 
-	wire Q_internal;
 	wire Qm, Qmn;   // Master latch output
 
     // Master latch
@@ -40,10 +38,8 @@ module d_flip_flop (
     d_latch slave_latch (
         .D(Qm),
         .enable(clk),
-        .Q(Q_internal),
+        .Q(Q),
         .Qn(Qn)
     );
 
-    // Reset, because DFF starts with x and it ruins everything :/
-    assign Q = rstn ? Q_internal : 1'b0;
 endmodule

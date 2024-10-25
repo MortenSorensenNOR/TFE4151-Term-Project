@@ -4,7 +4,6 @@ module tb_fsm ();
     localparam unsigned CLK_PERIOD_HALF = 5;    // 100 MHz CLK    
 
     reg clk;
-    reg rstn;
     reg op;
     reg select;
 
@@ -13,7 +12,6 @@ module tb_fsm ();
 
     fsm fsm_inst (
         .clk(clk),
-        .rstn(rstn),
         .op(op),
         .select(select),
         .rw(rw),
@@ -30,8 +28,8 @@ module tb_fsm ();
     initial begin
         $monitor("Time = %0d, sel = %b, op = %b -> rw = %b, valid = %b", $time, select, op, rw, valid); 
 
-        #0 rstn = 1'b0; op = 1'b0; select = 1'b0;
-        #10 rstn = 1'b1;
+        // Reset state by leaving select = 0 for two clock cycles
+        #0 op = 1'b0; select = 1'b0;
 
         #20 op = 1'b1;
         #20 op = 1'b0;

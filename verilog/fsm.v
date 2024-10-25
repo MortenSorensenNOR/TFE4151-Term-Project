@@ -8,8 +8,6 @@
 
 module fsm (
     input wire clk,
-	input wire rstn,
-	
     input wire op,
     input wire select,
     output wire valid,
@@ -22,7 +20,6 @@ module fsm (
     // State D Flip-Flop
     d_flip_flop state_dff_0 (
 		.clk(clk),
-		.rstn(rstn),
         .D(next_state[0]),
         .Q(current_state[0]),
         .Qn()
@@ -30,7 +27,6 @@ module fsm (
 
     d_flip_flop state_dff_1 (
 		.clk(clk),
-		.rstn(rstn),
         .D(next_state[1]),
         .Q(current_state[1]),
         .Qn()

@@ -1,22 +1,26 @@
 
 module AddressDec(input [2:0] a, output [7:0] w);   
-
 	wire [2:0] nota;
-	
-	assign nota = ~a;
-	
-	assign w[0] = nota[2] & nota[1] & nota[0];    
-    assign w[1] = nota[2] & nota[1] &    a[0];
-    assign w[2] = nota[2] &    a[1] & nota[0];
-    assign w[3] = nota[2] &    a[1] &    a[0];           
-    assign w[4] =    a[2] & nota[1] & nota[0];    
-    assign w[5] =    a[2] & nota[1] &    a[0];
-    assign w[6] =    a[2] &    a[1] & nota[0];
-    assign w[7] =    a[2] &    a[1] &    a[0];
-	
+    not (nota[0], a[0]);
+    not (nota[1], a[1]);
+    not (nota[2], a[2]);
+
+    wire T0, T1, T2, T3;
+
+    and U0 (T0, nota[2], nota[1]);
+    and U1 (T1, nota[2],    a[1]);
+    and U2 (T3,    a[2], nota[1]);
+    and U3 (T4,    a[2],    a[1]);
+
+    and U4 (w[0], T0, nota[0]);
+    and U5 (w[1], T0,    a[0]);
+    and U4 (w[0], T1, nota[0]);
+    and U5 (w[1], T1,    a[0]);
+    and U4 (w[0], T2, nota[0]);
+    and U5 (w[1], T2,    a[0]);
+    and U4 (w[0], T3, nota[0]);
+    and U5 (w[1], T3,    a[0]);
 endmodule
-
-
 
 module adressTestbench();
 

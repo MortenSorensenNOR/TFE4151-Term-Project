@@ -1,5 +1,5 @@
 module wordCell(
-    input [1:0] rw,              // Read/Write signal
+    input rw,              // Read/Write signal
     input wordLine,              // Wordline signal
     input [7:0] word,            // 8-bit word input
     input [7:0] bitLinesIn,      // 8-bit input bitlines
@@ -33,7 +33,7 @@ endmodule
 module wordCellTestbench();	// testing output on bitline.
 	reg wordLine;
 	reg [7:0] inWord;   // not nWord
-	reg [1:0] rw;
+	reg rw;
 	reg [7:0] bitLinesIn;
 	wire [7:0] bitLinesOut;	
 	
@@ -49,10 +49,17 @@ module wordCellTestbench();	// testing output on bitline.
 	initial begin 
         $monitor("Time = %0d, rw = %b, wordLine = %b inputWord = %b, bitLinesOut = %b", $time, rw, wordLine, inWord, bitLinesOut);
 		
-		wordLine = 1'b0; inWord = 8'b01010101; rw = 2'b01; bitLinesIn = 8'b00000000; #10; 
-		wordLine = 1'b1; inWord = 8'b01010101; rw = 2'b01; bitLinesIn = 8'b00000000; #10;  
-		wordLine = 1'b1; inWord = 8'b00000000; rw = 2'b00; bitLinesIn = 8'b00000000; #10;   
-		wordLine = 1'b1; inWord = 8'b00000000; rw = 2'b10; bitLinesIn = 8'b00000000; #10; 
+		// try to write without wordline
+		wordLine = 1'b0; inWord = 8'b01010101; rw = 2'b1; bitLinesIn = 8'b00000000; #10;  
+		wordLine = 1'b1; inWord = 8'b00000000; rw = 2'b0; bitLinesIn = 8'b00000000; #10; 
+		
+		// try to write with wordline and read
+		wordLine = 1'b1; inWord = 8'b01010101; rw = 2'b1; bitLinesIn = 8'b00000000; #10;  
+		wordLine = 1'b1; inWord = 8'b00000000; rw = 2'b0; bitLinesIn = 8'b00000000; #10; 
+		
+		// write a different word and read
+		wordLine = 1'b1; inWord = 8'b00111000; rw = 2'b1; bitLinesIn = 8'b00000000; #10;  
+		wordLine = 1'b1; inWord = 8'b00000000; rw = 2'b0; bitLinesIn = 8'b00000000; #10;  
 		#10
 		#10
 		

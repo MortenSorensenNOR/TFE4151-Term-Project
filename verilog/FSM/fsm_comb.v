@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module fsm_comb(
     input wire op,
     input wire select,

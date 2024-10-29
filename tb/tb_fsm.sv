@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module tb_fsm ();
     localparam unsigned CLK_PERIOD_HALF = 5;    // 100 MHz CLK    
 

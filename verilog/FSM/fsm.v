@@ -4,8 +4,6 @@
 // 11: Write
 // 01: Stable
 
-`timescale 1ns / 1ps
-
 module fsm (
     input wire clk,
     input wire op,
@@ -18,18 +16,10 @@ module fsm (
     wire [1:0] next_state;
 
     // State D Flip-Flop
-    d_flip_flop state_dff_0 (
-		.clk(clk),
-        .D(next_state[0]),
-        .Q(current_state[0]),
-        .Qn()
-    );
-
-    d_flip_flop state_dff_1 (
-		.clk(clk),
-        .D(next_state[1]),
-        .Q(current_state[1]),
-        .Qn()
+    dff_reg_2 state_reg_inst (
+        .clk(clk),
+        .i(next_state),
+        .o(current_state)
     );
 
     // Next state

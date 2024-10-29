@@ -18,8 +18,8 @@ endmodule
 
 
 module d_flip_flop (
-    input wire D,
     input wire clk,
+    input wire D,
     output wire Q,
     output wire Qn
 );

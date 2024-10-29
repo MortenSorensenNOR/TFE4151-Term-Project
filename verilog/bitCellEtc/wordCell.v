@@ -55,6 +55,7 @@ module wordCellTestbench();	// testing output on bitline.
 		
 		// try to write with wordline and read
 		wordLine = 1'b1; inWord = 8'b01010101; rw = 2'b1; bitLinesIn = 8'b00000000; #10;  
+		wordLine = 1'b0; inWord = 8'b00000000; rw = 2'b1; bitLinesIn = 8'b00000000; #10;
 		wordLine = 1'b1; inWord = 8'b00000000; rw = 2'b0; bitLinesIn = 8'b00000000; #10; 
 		
 		// write a different word and read

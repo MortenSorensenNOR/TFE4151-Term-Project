@@ -4,17 +4,17 @@ module tb_memory_unit ();
     reg clk;
     reg op;
     reg select;
-    reg [2:0] addr;
+    reg [2:0] tb_addr;
 
-    reg [7:0] r_data_in;
+    reg [7:0] tb_data_in;
     wire [7:0] w_data_out;
 	
     memory_unit memory_unit_inst (
         .clk(clk),
         .op(op),
         .select(select),
-		.addr(addr),
-        .data_in(r_data_in),
+		.addr(tb_addr),
+        .data_in(tb_data_in),
         .data_out(w_data_out)
     );
 
@@ -27,17 +27,65 @@ module tb_memory_unit ();
         end
     end
 
+    task write_data(
+        input [2:0] addr,
+        input [7:0] write_data,
+		output w_select,
+		output w_op
+    );
+        w_select = 1;
+        w_op = 1;
+        tb_addr = addr;
+        tb_data_in = write_data;   
+    endtask //automatic
+
+    task read_data(
+		input [2:0] addr,
+		output w_select,
+		output w_op
+    );
+        w_select = 1;
+        w_op = 0;
+        tb_addr = addr;
+        tb_data_in = '0;
+    endtask //automatic
+
     // Generate data sigals
     initial begin
-        op = 0; select = 0; addr = '0; r_data_in = '0;
+        op = 0; select = 0; tb_addr = '0; tb_data_in = '0; #40
 		
-        #40 select = 1; op = 1; addr = 1; r_data_in = 8'b01001001;
-        #20 select = 1; op = 0; addr = 1; r_data_in = '0;
-        #20 select = 1; op = 1; addr = 0; r_data_in = 8'b11001100;
-        #20 select = 1; op = 1; addr = 7; r_data_in = 8'b00110011;
-        #20 select = 1; op = 0; addr = 0; r_data_in = '0;
-        #20 select = 1; op = 0; addr = 7; r_data_in = '0;
-        
+        // #40 write_data(3'b000, 8'b00000001, select, op);
+        // #20 write_data(3'b001, 8'b00000010, select, op);
+        // #20 write_data(3'b010, 8'b00000011, select, op);
+		// #20 write_data(3'b011, 8'b00000100, select, op);
+        // #20 write_data(3'b100, 8'b00000101, select, op);
+        // #20 write_data(3'b101, 8'b00000110, select, op);
+		// #20 write_data(3'b110, 8'b00000111, select, op);
+		// #20 write_data(3'b111, 8'b00001000, select, op);
+		// #20 read_data(3'b000, select, op);	 
+		// #10 read_data(3'b001, select, op);
+		// #10 read_data(3'b010, select, op);
+		// #10 read_data(3'b011, select, op);
+		// #10 read_data(3'b100, select, op);
+		// #10 read_data(3'b101, select, op);
+		// #10 read_data(3'b110, select, op);
+		// #10 read_data(3'b111, select, op);
+
+        write_data(3'b000, 8'b01101101, select, op); #20
+        write_data(3'b001, 8'b01101111, select, op); #20
+        write_data(3'b010, 8'b01110010, select, op); #20
+        write_data(3'b011, 8'b01110100, select, op); #20
+        write_data(3'b100, 8'b01100101, select, op); #20
+        write_data(3'b101, 8'b01101110, select, op); #20
+
+        read_data(3'b000, select, op); #10
+        read_data(3'b001, select, op); #10
+        read_data(3'b010, select, op); #10
+        read_data(3'b011, select, op); #10
+        read_data(3'b100, select, op); #10
+        read_data(3'b101, select, op); #10
+		
+		#10 op = 0; select = 0;
 		
 		#40 $finish;
     end

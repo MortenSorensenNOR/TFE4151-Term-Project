@@ -1,0 +1,33 @@
+*.PARAM ln_and_inv=0.3u   ! Length of NMOS transistors
+*.PARAM wn_and_inv=1.5u    ! Width  of NMOS transistors
+*.PARAM lp_and_inv=0.3u   ! Length of PMOS transistors
+*.PARAM wp_and_inv=1.5u    ! Width  of PMOS transistors
+
+.PARAM ln_and_inv=ln   ! Length of NMOS transistors
+.PARAM wn_and_inv=wn    ! Width  of NMOS transistors
+.PARAM lp_and_inv=lp   ! Length of PMOS transistors
+.PARAM wp_and_inv=wp    ! Width  of PMOS transistors
+
+.subckt AND_GATE_INV_A A B Y VDD VSS
+
+* drain gate source bulk  <-- port order both n and p
+* A-inverter
+xmn7 Ainv A VDD A pmos1v l=lp_and_inv w=wp_and_inv   ! PMOS controlled by input A
+xmn8 Ainv A VSS A nmos1v l=ln_and_inv w=wn_and_inv   ! NMOS controlled by input A
+
+* Pull-up network (PMOS transistors in parallel)
+xmn1 Yinv Ainv VDD Ainv pmos1v l=lp_and_inv w=wp_and_inv   ! PMOS controlled by input A
+xmn2 Yinv B    VDD B pmos1v l=lp_and_inv w=wp_and_inv   ! PMOS controlled by input B (in parallel with xmn1)
+
+* Pull-down network (NMOS transistors in series)
+xmn3 Yinv Ainv T   Ainv   nmos1v l=ln_and_inv w=wn_and_inv   ! NMOS controlled by input A
+xmn4 T    B    VSS B nmos1v l=ln_and_inv w=wn_and_inv   ! NMOS controlled by input B (in series with xmn3)
+
+
+
+* inverter pull up
+xmn5 Y Yinv VDD VDD pmos1v l=lp_and_inv w=wp_and_inv   ! PMOS controlled by input Yinverted
+xmn6 Y Yinv VSS VSS nmos1v l=ln_and_inv w=wn_and_inv   ! NMOS controlled by input Yinverted
+
+
+.ends

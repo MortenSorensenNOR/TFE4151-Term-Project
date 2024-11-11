@@ -1,0 +1,16 @@
+.PARAM ln_not=0.2u   ! Length of NMOS transistors
+.PARAM wn_not=0.25u    ! Width  of NMOS transistors
+.PARAM lp_not=0.2u   ! Length of PMOS transistors
+.PARAM wp_not=1u    ! Width  of PMOS transistors
+
+.subckt NOT_GATE A Y VDD VSS
+
+* drain gate source bulk  <-- port order both n and p
+* output inverter
+xmn1 Y A VDD B1 pmos1v l=lp_not w=wp_not   ! PMOS controlled by input Yinverted
+xmn3 Y A B1  B1 pmos1v l=lp_not w=wp_not
+
+xmn2 Y A VSS B2 nmos1v l=ln_not w=wn_not   ! NMOS controlled by input Yinverted
+xmn4 Y A B2  B2 nmos1v l=ln_not w=wn_not
+
+.ends

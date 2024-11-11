@@ -1,0 +1,22 @@
+*.PARAM ln_snor=0.3u   ! Length of NMOS transistors
+*.PARAM wn_snor=1.5u    ! Width  of NMOS transistors
+*.PARAM lp_snor=0.3u   ! Length of PMOS transistors
+*.PARAM wp_snor=1.5u    ! Width  of PMOS transistors
+
+.PARAM ln_snor=ln  ! Length of NMOS transistors
+.PARAM wn_snor=wn/2    ! Width  of NMOS transistors
+.PARAM lp_snor=lp   ! Length of PMOS transistors
+.PARAM wp_snor=wp/2    ! Width  of PMOS transistors
+
+.subckt SLOW_NOR_GATE A B Y VDD VSS
+
+* drain gate source bulk  <-- port order both n and p
+* Pull-up network (PMOS transistors in series)
+xmn1 T A VDD VDD pmos1v l=lp_nor w=wp_nor      ! PMOS controlled by input A
+xmn2 Y B T   T   pmos1v l=lp_nor w=wp_nor      ! PMOS controlled by input B (in series with xmn1)
+
+* Pull-down network (NMOS transistors in series)
+xmn3 Y A VSS VSS nmos1v l=ln_nor w=wn_nor   ! NMOS controlled by input A
+xmn4 Y B VSS VSS nmos1v l=ln_nor w=wn_nor   ! NMOS controlled by input B (in paralell with xmn3)
+
+.ends

@@ -1,14 +1,19 @@
-.PARAM ln_nor=0.2u   ! Length of NMOS transistors
-.PARAM wn_nor=0.25u    ! Width  of NMOS transistors
-.PARAM lp_nor=0.2u   ! Length of PMOS transistors
-.PARAM wp_nor=1u    ! Width  of PMOS transistors
+*.PARAM ln_nor=0.3u   ! Length of NMOS transistors
+*.PARAM wn_nor=1.5u    ! Width  of NMOS transistors
+*.PARAM lp_nor=0.3u   ! Length of PMOS transistors
+*.PARAM wp_nor=1.5u    ! Width  of PMOS transistors
+
+.PARAM ln_nor=ln  ! Length of NMOS transistors
+.PARAM wn_nor=wn    ! Width  of NMOS transistors
+.PARAM lp_nor=lp   ! Length of PMOS transistors
+.PARAM wp_nor=wp    ! Width  of PMOS transistors
 
 .subckt NOR_GATE A B Y VDD VSS
 
 * drain gate source bulk  <-- port order both n and p
 * Pull-up network (PMOS transistors in series)
 xmn1 T A VDD VDD pmos1v l=lp_nor w=wp_nor      ! PMOS controlled by input A
-xmn2 Y B T   VDD pmos1v l=lp_nor w=wp_nor      ! PMOS controlled by input B (in series with xmn1)
+xmn2 Y B T   T   pmos1v l=lp_nor w=wp_nor      ! PMOS controlled by input B (in series with xmn1)
 
 * Pull-down network (NMOS transistors in series)
 xmn3 Y A VSS VSS nmos1v l=ln_nor w=wn_nor   ! NMOS controlled by input A

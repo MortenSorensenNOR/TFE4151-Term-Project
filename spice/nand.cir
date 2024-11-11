@@ -1,0 +1,23 @@
+*.PARAM ln_and=0.3u   ! Length of NMOS transistors
+*.PARAM wn_and=1.5u    ! Width  of NMOS transistors
+*.PARAM lp_and=0.3u   ! Length of PMOS transistors
+*.PARAM wp_and=1.5u    ! Width  of PMOS transistors
+
+.PARAM ln_nand=ln   ! Length of NMOS transistors
+.PARAM wn_nand=wn    ! Width  of NMOS transistors
+.PARAM lp_nand=lp   ! Length of PMOS transistors
+.PARAM wp_nand=wp    ! Width  of PMOS transistors
+
+.subckt NAND_GATE A B Y VDD VSS
+
+* drain gate source bulk  <-- port order both n and p
+* Pull-up network (PMOS transistors in parallel)
+xmn1 Y A VDD VDD pmos1v l=lp_nand w=wp_nand   ! PMOS controlled by input A
+xmn2 Y B VDD VDD pmos1v l=lp_nand w=wp_nand   ! PMOS controlled by input B (in parallel with xmn1)
+
+* Pull-down network (NMOS transistors in series)
+xmn3 Y A T   T   nmos1v l=ln_nand w=wn_nand   ! NMOS controlled by input A
+xmn4 T B VSS VSS nmos1v l=ln_nand w=wn_nand   ! NMOS controlled by input B (in series with xmn3)
+
+
+.ends

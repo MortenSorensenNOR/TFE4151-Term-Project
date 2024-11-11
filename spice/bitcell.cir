@@ -1,30 +1,54 @@
 [aimspice]
 [description]
-1488
+2657
 BitCell
-.include gpdk90nm_sf.cir
-.include and.cir
-.include and_inv_a.cir
+.include gpdk90nm_ss.cir
+
+.include nand.cir
+.include not.cir
 .include or.cir
 .include nor.cir
+.include and.cir
 
-.PARAM supVol = 1v
+.PARAM ln=0.1u   ! Length of NMOS transistors
+.PARAM wn=1.5u    ! Width  of NMOS transistors
+.PARAM lp=0.1u   ! Length of PMOS transistors
+.PARAM wp=1.5u    ! Width  of PMOS transistors
+
+.PARAM supVol = 0.41v
 V_VDD  VDD    0  supVol    ! Supply voltage
 V_VSS  0      0            ! Ground
 
+! ------------------------------ full simulation 150 ns
 ! Inputs   net               voltage1  voltage2  delay  rise  fall  width  period   (set period to bigass number for one pulse)
-V_RW       RW       0 PULSE  0         supVol    5n     1n    1n    15n    60n      ! 0 = read,   1 = write
-V_WORDLINE WORDLINE 0 PULSE  0         supVol    5n     1n    1n    15n    30n    
-V_I        I        0 PULSE  0         supVol    50n    1n    1n    50n    300000n      ! input bit
-V_BITCARRY BITCARRY 0 DC     0                                                      ! Keep bitcarry at 0 for the simulation
+*V_RW       RW       0 PULSE  0         supVol    5n     0.1n    0.1n    15n    60n      ! 0 = read,   1 = writ
+*V_WORDLINE WORDLINE 0 PULSE  0         supVol    5n     0.1n    0.1n    15n    30n    
+*V_I        I        0 PULSE  0         supVol    50n    0.1n    0.1n    50n    300000n      ! input bit
+*V_BITCARRY BITCARRY 0 DC     0                                                      ! Keep bitcarry at 0 for the simulation
+
+
+!---------------------------------- just transition 3 ns
+! Inputs   net               voltage1  voltage2  delay  rise     fall  width  period   (set period to bigass number for one pulse)
+V_RW       RW       0 PULSE  0         supVol    0n     0.05n    0.1n    15n    60n      ! 0 = read,   1 = write
+V_WORDLINE WORDLINE 0 PULSE  0         supVol    0n     0.05n    0.1n    15n    30n    
+V_I        I        0 PULSE  0         supVol    3n     0.05n    0.1n    50n    300000n      ! input bit
+V_BITCARRY BITCARRY 0 DC     0   
 
 
 ! instance  inputA  inputB    output  VDD  VSS  type
-X1          RW      WORDLINE  T1      VDD  0    AND_GATE        ! wordline + rw gates
-X2          RW      WORDLINE  T4      VDD  0    AND_GATE_INV_A 
+X1          RW      WORDLINE  T6      VDD  0    NAND_GATE        ! wordline + rw gates
+X9          T6			T1      VDD  0    NOT_GATE
 
-X3          I       T1        T2      VDD  0    AND_GATE        ! input bit ands
-X4          I       T1        T3      VDD  0    AND_GATE_INV_A
+X10         RW                RWtemp  VDD  0    NOT_GATE
+X2          RWtemp  WORDLINE  T7      VDD  0    NAND_GATE'
+X11         T7                T4      VDD  0    NOT_GATE
+
+X3          I       T1        T8      VDD  0    NAND_GATE        ! input bit ands
+X12         T8                T2      VDD  0    NOT_GATE
+
+X13         I                 Iinv    VDD  0    NOT_GATE
+X4          Iinv    T1        T9      VDD  0    NAND_GATE
+X14         T9                T3      VDD  0    NOT_GATE
 
 X5          T2      Qinv      Q       VDD  0    NOR_GATE        ! flip flop
 X6          T3      Q         Qinv    VDD  0    NOR_GATE 
@@ -33,11 +57,15 @@ X7          Qinv    T4        T5      VDD  0    AND_GATE        ! bitLine logic
 X8          T5      BITCARRY  BITOUT  VDD  0    OR_GATE 
 
 
-.plot v(rw) v(WORDLINE) v(I) v(qinv) v(q) I(R1)
+.plot v(rw) v(WORDLINE) v(I) v(qinv) v(q) I(R1) v(T1) v(T2) v(T3)
 *option ymin=-0.2 ymax=1.1
 
 
 
+[options]
+2
+Tnom 50
+Temp 50
 [dc]
 1
 VDD
@@ -45,10 +73,10 @@ VDD
 1
 0.001
 [tran]
-0.1n
-120n
-X
-X
+0.001n
+6n
+0
+0.01n
 0
 [ana]
 4 0

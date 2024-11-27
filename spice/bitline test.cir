@@ -1,0 +1,58 @@
+[aimspice]
+[description]
+1603
+Bitline test
+
+.include gpdk90nm_tt.cir
+
+.include nand.cir
+.include not.cir
+.include or.cir
+.include nor.cir
+.include and.cir
+.include bitcellModule.cir
+
+.PARAM ln=0.1u   ! Length of NMOS transistors
+.PARAM wn=1.5u    ! Width  of NMOS transistors
+.PARAM lp=0.1u   ! Length of PMOS transistors
+.PARAM wp=1.5u    ! Width  of PMOS transistors
+
+.PARAM supVol = 0.415v
+V_VDD  VDD    0  supVol    ! Supply voltage
+V_VSS  0      0            ! Ground
+
+! ------------------------------ full simulation 150 ns
+! Inputs   net               voltage1  voltage2  	delay  	rise  	fall  	width  	period   (set period to bigass number for one pulse)
+V_RW       RW       0 PULSE  0         supVol    	5n     	0.1n    	0.1n    	15n    	60n      ! 0 = read,   1 = writ
+V_WORDLINE WORDLINE 0 PULSE  0         supVol    	5n     	0.1n   	0.1n    	15n    	300000n    
+V_I        I        0 PULSE  0         supVol    	4n		0.1n   	0.1n		50n    	300000n      ! input bit
+V_BITCARRY BITCARRY 0 DC     0                                                      ! Keep bitcarry at 0 for the simulation
+
+
+!instance 	RW 	WORDLINE 	I 	BITCARRY 	BITOUT 	VDD 	VSS	type
+
+X1 		RW 	WORDLINE 	I 	0		BL1		VDD	0	BITCELL
+X2 		RW 	0	 	I 	BL1		BL2		VDD	0	BITCELL
+X3 		RW 	0	 	I 	BL2		BL3		VDD	0	BITCELL
+X4 		RW 	0	 	I 	BL3		BL4		VDD	0	BITCELL
+X5 		RW 	0	 	I 	BL4		BL5		VDD	0	BITCELL
+X6 		RW 	0	 	I 	BL5		BL6		VDD	0	BITCELL
+X7 		RW 	0	 	I 	BL6		BL7		VDD	0	BITCELL
+X8 		RW 	0	 	I 	BL7		BITOUT	VDD	0	BITCELL
+
+
+
+
+
+.plot v(RW) v(WORDLINE) v(I) v(BL1)  v(BL2)  v(BL3)  v(BL4)  v(BL5)  v(BL6)  v(BL7) v(BITOUT)
+
+
+[tran]
+0.01
+100ns
+0ns
+0.1ns
+0
+[ana]
+4 0
+[end]

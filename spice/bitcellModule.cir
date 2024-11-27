@@ -1,0 +1,25 @@
+.subckt BITCELL RW WORDLINE I BITCARRY BITOUT VDD VSS
+
+! instance  inputA  inputB    output  VDD  VSS  type
+X1          RW      WORDLINE  T6      VDD  0    NAND_GATE        ! wordline + rw gates
+X9          T6			T1      VDD  0    NOT_GATE
+
+X10         RW                RWtemp  VDD  0    NOT_GATE
+X2          RWtemp  WORDLINE  T7      VDD  0    NAND_GATE
+X11         T7                T4      VDD  0    NOT_GATE
+
+X3          I       T1        T8      VDD  0    NAND_GATE        ! input bit ands
+X12         T8                T2      VDD  0    NOT_GATE
+
+X13         I                 Iinv    VDD  0    NOT_GATE
+X4          Iinv    T1        T9      VDD  0    NAND_GATE
+X14         T9                T3      VDD  0    NOT_GATE
+
+X5          T2      Qinv      Q       VDD  0    NOR_GATE        ! flip flop
+X6          T3      Q         Qinv    VDD  0    NOR_GATE 
+
+X7          Qinv    T4        T5      VDD  0    AND_GATE        ! bitLine logic
+X8          T5      BITCARRY  BITOUT  VDD  0    OR_GATE 
+
+.ends
+
